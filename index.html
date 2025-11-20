@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brandora.id</title>
+    
+    <!-- Memuat Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Memuat Font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Memuat Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script type="text/javascript">
+   (function(){
+      // ⚠️ GANTI "PUBLIC_KEY_ANDA" DENGAN PUBLIC KEY DARI AKUN EMAILJS ANDA
+      emailjs.init("3sqMGhQ5fltZg5lwh");
+   })();
+</script>
+    
+    
+    
+    <style>
+        /* Menggunakan font Inter sebagai default */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #05040B; /* Latar belakang gelap pekat */
+            color: #E0E0E0;
+        }
+
+        /* Latar belakang gradien radial untuk efek 'glow' */
+        .main-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(circle at 30% 0%, rgba(124, 58, 237, 0.3), transparent 40%),
+                              radial-gradient(circle at 70% 50%, rgba(99, 102, 241, 0.2), transparent 70%);
+            z-index: -1;
+            opacity: 0.7;
+        }
+
+        /* Animasi untuk teks gradien */
+        .gradient-text {
+            background-image: linear-gradient(to right, #A78BFA, #C4B5FD, #FFFFFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Animasi 'breathing glow' untuk teks hero */
+        .hero-glow {
+            animation: breathing-glow 4s ease-in-out infinite;
+        }
+        @keyframes breathing-glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(167, 139, 250, 0.3), 0 0 20px rgba(167, 139, 250, 0.2); }
+            50% { text-shadow: 0 0 20px rgba(167, 139, 250, 0.6), 0 0 40px rgba(167, 139, 250, 0.4); }
+        }
+
+        /* Styling untuk carousel produk */
+        .product-carousel {
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+        }
+        .product-track {
+            display: flex;
+            width: calc(16.6667% * 16); /* Total 16 slides (8 + 8 duplikat), masing-masing 16.6667% */
+            animation: scroll 32s linear infinite; /* 4s per gambar * 8 gambar = 32s */
+        }
+        .product-slide {
+            flex-shrink: 0;
+            width: 16.6667%; /* 100% / 6 (tampilkan 6 gambar sekaligus) */
+            padding: 0 1rem;
+        }
+        .product-track:hover {
+            animation-play-state: paused;
+        }
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); } /* Menggeser sejauh 8 gambar (setengah dari total track) */
+        }
+
+        /* Kelas untuk animasi fade-in-up saat scroll */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4F46E5;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6366F1;
+        }
+    </style>
+</head>
+<body class="bg-[#05040B] text-gray-300">
+
+    <!-- Wrapper utama untuk efek gradien latar belakang -->
+    <div class="main-wrapper relative overflow-hidden z-0">
+
+        <!-- ===== Header / Navbar ===== -->
+        <header class="absolute top-0 left-0 right-0 z-50 py-6 px-4 md:px-8 lg:px-12">
+            <div class="container mx-auto flex justify-between items-center">
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <!-- 
+                        !!! GANTI 'src' DI BAWAH INI DENGAN URL LOGO ANDA !!!
+                        Saya sarankan menggunakan file SVG atau PNG transparan.
+                    -->
+                    <img src="logo-brandora.png" alt="Logo Brandora.id" class="h-10 w-10 rounded-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-purple-500/50" onerror="this.src='https://placehold.co/40x40/6366F1/FFFFFF?text=B.id'; this.onerror=null;">
+                    <span class="text-white text-2xl font-bold tracking-tight transition-colors duration-300 group-hover:text-purple-300">Brandora.id</span>
+                </a>
+
+                <!-- Navigasi Desktop -->
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="#produk" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium">Produk</a>
+                    <a href="#fitur" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium">Fitur</a>
+                    <a href="#testimoni" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium">Testimoni</a>
+                    <a href="#kontak" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium">Kontak</a>
+                </nav>
+
+                <!-- Tombol CTA -->
+
+                <!-- Tombol Menu Mobile -->
+                <button id="menu-btn" class="md:hidden z-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Menu Mobile -->
+        <div id="mobile-menu" class="hidden md:hidden fixed inset-0 bg-black/90 backdrop-blur-lg z-40 flex flex-col items-center justify-center space-y-8">
+            <a href="#produk" class="text-gray-200 text-2xl font-medium">Produk</a>
+            <a href="#fitur" class="text-gray-200 text-2xl font-medium">Fitur</a>
+            <a href="#testimoni" class="text-gray-200 text-2xl font-medium">Testimoni</a>
+            <a href="#kontak" class="text-gray-200 text-2xl font-medium">Kontak</a>
+        </div>
+
+        <!-- ===== Main Content ===== -->
+        <main>
+            <!-- ===== Hero Section ===== -->
+            <!-- DIUBAH: pb-20 menjadi pb-12 lg:pb-20 -->
+            <section class="relative min-h-screen flex items-center justify-center pt-32 pb-12 lg:pb-20">
+                <div class="container mx-auto px-4 text-center z-10">
+                    <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-6">
+                        <span class="gradient-text hero-glow">Beyond Branding,</span>
+                        <span class="block text-white mt-2 md:mt-4">We Build Feelings</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+                        Solusi perangkat lunak terintegrasi untuk membawa kolaborasi dan produktivitas tim Anda ke level berikutnya.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="#video" class="bg-indigo-600 text-white font-semibold px-8 py-3.5 rounded-lg shadow-lg shadow-indigo-500/30 hover:bg-indigo-500 transition-all duration-300 hover:scale-105 text-lg">
+                            Mulai Sekarang
+                        </a>
+                    </div>
+                    
+                    <!-- ===== KOTAK VIDEO YOUTUBE (BARU) ===== -->
+                    <div id class="container mx-auto px-4 mt-16 lg:mt-24 max-w-4xl fade-in-up" style="transition-delay: 200ms;">
+                        <div class="relative aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-indigo-500/30 border-2 border-gray-800">
+                            <!-- 
+                                !!! GANTI 'dQw4w9WgXcQ' DENGAN ID VIDEO YOUTUBE ANDA !!!
+                            -->
+                            <iframe 
+                                class="absolute top-0 left-0 w-full h-full"
+                                src="https://www.youtube.com/embed/ZoAIEZNBjP0" 
+                                title="Video produk Brandora.id" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+                    <!-- ===== AKHIR KOTAK VIDEO ===== -->
+                    
+                </div>
+            </section>
+            
+            <!-- ===== Newsletter Section ===== -->
+            <!-- DIUBAH: py-20 lg:py-32 menjadi py-12 lg:py-20 -->
+            <section class="py-12 lg:py-20">
+                <div class="container mx-auto px-4">
+                    <div class="bg-gray-900/50 border border-gray-800 rounded-3xl p-8 md:p-16 text-center shadow-2xl shadow-black/40 backdrop-blur-md fade-in-up">
+                        <h2 class="text-3xl md:text-4xl lg:text-5xl text-white font-bold mb-4">
+                            Tertarik Ingin Mencoba?
+                        </h2>
+                        <p class="text-lg text-gray-400 max-w-xl mx-auto mb-10">
+                            Isi Email dibawah untuk ikuti perkembangan update dengan fitur terbaru, insight industri, dan penawaran spesial dari kami.
+                        </p>
+                        
+                        <!-- ===== FORM MODIFIKASI ===== -->
+                        <!-- DIUBAH: Dihapus 'sm:flex-row' dari form dan ditambah textarea -->
+                        <form class="flex flex-col gap-4 max-w-lg mx-auto" id="subscription-form">
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <input type="email" placeholder="Masukkan email Anda" class="flex-grow bg-gray-800/70 border border-gray-700 text-white px-6 py-3.5 rounded-lg" required>
+                                <button type="submit" class="bg-indigo-600 text-white font-semibold px-8 py-3.5 rounded-lg">Subscribe</button>
+                            </div>
+                            <textarea name="feedback_message" placeholder="Pesan atau masukan Anda (Opsional)" class="bg-gray-800/70 text-white px-6 py-3.5 rounded-lg" rows="4"></textarea>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            
+            <!-- ===== Client Logos Section (DIHAPUS) ===== -->
+
+            <!-- ===== Key Features Section ===== -->
+            <!-- DIUBAH: py-20 lg:py-32 menjadi py-12 lg:py-20 -->
+            <section id="fitur" class="py-12 lg:py-20">
+                <div class="container mx-auto px-4">
+                    <div class="text-center mb-16 fade-in-up">
+                        <span class="text-indigo-400 font-semibold uppercase tracking-wider">Fitur</span>
+                        <h2 class="text-3xl md:text-4xl lg:text-5xl text-white font-bold mt-2">
+                            Kategori Fitur Utama
+                        </h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Fitur Card 1 -->
+                        <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-2xl shadow-2xl shadow-black/30 backdrop-blur-md transition-all duration-300 hover:border-purple-500 hover:scale-[1.03] hover:shadow-purple-500/20 fade-in-up">
+                            <div class="w-14 h-14 bg-indigo-600 rounded-lg flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/50">
+                                <!-- Ikon (Heroicons) -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl text-white font-semibold mb-3">Manajemen Konten Digital</h3>
+                            <p class="text-gray-400">Simpan, atur dan kolaborasikan seluruh ide konten anda dengan dengan platform yang terpusat.</p>
+                        </div>
+
+                        <!-- Fitur Card 2 -->
+                        <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-2xl shadow-2xl shadow-black/30 backdrop-blur-md transition-all duration-300 hover:border-purple-500 hover:scale-[1.03] hover:shadow-purple-500/20 fade-in-up" style="transition-delay: 150ms;">
+                            <div class="w-14 h-14 bg-indigo-600 rounded-lg flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/50">
+                                <!-- Ikon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl text-white font-semibold mb-3">Data Analitik & AI Insight</h3>
+                            <p class="text-gray-400"> Dapatkan wawasan dari performa kampanye digital Anda, didukung AI untuk hasil maksimal.</p>
+                        </div>
+
+                        <!-- Fitur Card 3 -->
+                        <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-2xl shadow-2xl shadow-black/30 backdrop-blur-md transition-all duration-300 hover:border-purple-500 hover:scale-[1.03] hover:shadow-purple-500/20 fade-in-up" style="transition-delay: 300ms;">
+                            <div class="w-14 h-14 bg-indigo-600 rounded-lg flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/50">
+                                <!-- Ikon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.001 9.001 0 0120.488 9z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl text-white font-semibold mb-3">Akses Ahli & Strategi </h3>
+                            <p class="text-gray-400">Dapatkan akses ke tim ahli kami untuk strategi branding dan pemasaran yang disesuaikan.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== Stats Section ===== -->
+            <!-- DIUBAH: py-20 lg:py-32 menjadi py-12 lg:py-20 -->
+            <section class="py-12 lg:py-20">
+                <div class="container mx-auto px-4">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <!-- Kolom Kiri: Teks -->
+                        <div class="fade-in-up">
+                            <span class="text-indigo-400 font-semibold uppercase tracking-wider">The Power of Brandora.id</span>
+                            <h2 class="text-4xl md:text-5xl text-white font-bold mt-3 mb-6">
+                                Dibangun sebagai solusi All In One
+                            </h2>
+                            <p class="text-lg text-gray-400 mb-8">
+                                Brandora.id berupaya memabntu tim di seluruh dunia untuk meningkatkan kolaborasi, efisiensi, dan produktivitas mereka. Dengan fitur-fitur canggih dan antarmuka yang intuitif, kami berkomitmen untuk memberikan pengalaman terbaik bagi pengguna kami.
+                            </p>
+                            <a href="https://www.instagram.com/brandora.id?igsh=ZHNiczV1cDRoNnVw" class="bg-indigo-600 text-white font-semibold px-8 py-3.5 rounded-lg shadow-lg shadow-indigo-500/30 hover:bg-indigo-500 transition-all duration-300 hover:scale-105 text-lg">
+                                Cari Tahu Lebih Lanjut
+                            </a>
+                        </div>
+                        
+                        <!-- Kolom Kanan: Stats -->
+                        <div class="grid grid-cols-2 gap-8 fade-in-up" style="transition-delay: 150ms;">
+                            <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-2xl shadow-xl text-center backdrop-blur-sm">
+                                <span class="text-5xl lg:text-6xl font-extrabold gradient-text">+70%</span>
+                                <p class="text-gray-400 mt-2 text-lg">Peningkatan Produktivitas</p>
+                            </div>
+                            <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-2xl shadow-xl text-center backdrop-blur-sm">
+                                <span class="text-5xl lg:text-6xl font-extrabold gradient-text">+3</span>
+                                <p class="text-gray-400 mt-2 text-lg">Pengguna Aktif</p>
+                            </div>
+                            <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-2xl shadow-xl text-center backdrop-blur-sm">
+                                <span class="text-5xl lg:text-6xl font-extrabold gradient-text">99%</span>
+                                <p class="text-gray-400 mt-2 text-lg">Data Realtime</p>
+                            </div>
+                            <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-2xl shadow-xl text-center backdrop-blur-sm">
+                                <span class="text-5xl lg:text-6xl font-extrabold gradient-text">24/7</span>
+                                <p class="text-gray-400 mt-2 text-lg">Dukungan Pelanggan</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+             <!-- ===== Product Carousel Section ===== -->
+             <!-- DIUBAH: py-20 lg:py-32 menjadi py-12 lg:py-20 -->
+            <section id="produk" class="py-12 lg:py-20">
+                <div class="container mx-auto px-4 text-center mb-12 fade-in-up">
+                    <span class="text-indigo-400 font-semibold uppercase tracking-wider">Produk Kami</span>
+                    <h2 class="text-3xl md:text-4xl lg:text-5xl text-white font-bold mt-2">
+                        Lihat Platform Kami Beraksi
+                    </h2>
+                </div>
+                
+                <!-- Carousel -->
+                <div class="product-carousel w-full overflow-hidden relative">
+                    <div class="product-track flex">
+                        <!-- 8 Gambar Produk (placeholder) -->
+                        <div class="product-slide"><img src="product1.png" alt="Produk 1" class="rounded-xl shadow-2xl shadow-purple-900/50 w-full" onerror="this.src='https://placehold.co/600x400/1e1b4b/c4b5fd?text=Produk+1'; this.onerror=null;"></div>
+                        <div class="product-slide"><img src="product2.png" alt="Produk 2" class="rounded-xl shadow-2xl shadow-purple-900/50 w-full" onerror="this.src='https://placehold.co/600x400/1e1b4b/c4b5fd?text=Produk+2'; this.onerror=null;"></div>
+                        <div class="product-slide"><img src="product3.png" alt="Produk 3" class="rounded-xl shadow-2xl shadow-purple-900/50 w-full" onerror="this.src='https://placehold.co/600x400/1e1b4b/c4b5fd?text=Produk+3'; this.onerror=null;"></div>
+                        <div class="product-slide"><img src="product4.png" alt="Produk 4" class="rounded-xl shadow-2xl shadow-purple-900/50 w-full" onerror="this.src='https://placehold.co/600x400/1e1b4b/c4b5fd?text=Produk+4'; this.onerror=null;"></div>
+                        <div class="product-slide"><img src="product5.png" alt="Produk 5" class="rounded-xl shadow-2xl shadow-purple-900/50 w-full" onerror="this.src='https://placehold.co/600x400/1e1b4b/c4b5fd?text=Produk+5'; this.onerror=null;"></div>
+                        <div class="product-slide"><img src="product6.png" alt="Produk 6" class="rounded-xl shadow-2xl shadow-purple-900/50 w-full" onerror="this.src='https://placehold.co/600x400/1e1b4b/c4b5fd?text=Produk+6'; this.onerror=null;"></div>
+
+                        <!-- 8 Gambar Duplikat untuk loop mulus -->
+                        <div class="product-slide"><img src="product1.png" alt="Produk 1" class="rounded-xl shadow-2xl shadow-purple-900/50 w-full" onerror="this.src='https://placehold.co/600x400/1e1b4b/c4b5fd?text=Produk+1'; this.onerror=null;"></div>
+                        <div class="product-slide"><img src="product2.png" alt="Produk 2" class="rounded-xl shadow-2xl shadow-purple-900/50 w-full" onerror="this.src='https://placehold.co/600x400/1e1b4b/c4b5fd?text=Produk+2'; this.onerror=null;"></div>
+                        <div class="product-slide"><img src="product3.png" alt="Produk 3" class="rounded-xl shadow-2xl shadow-purple-900/50 w-full" onerror="this.src='https://placehold.co/600x400/1e1b4b/c4b5fd?text=Produk+3'; this.onerror=null;"></div>
+                        <div class="product-slide"><img src="product4.png" alt="Produk 4" class="rounded-xl shadow-2xl shadow-purple-900/50 w-full" onerror="this.src='https://placehold.co/600x400/1e1b4b/c4b5fd?text=Produk+4'; this.onerror=null;"></div>
+                        <div class="product-slide"><img src="product5.png" alt="Produk 5" class="rounded-xl shadow-2xl shadow-purple-900/50 w-full" onerror="this.src='https://placehold.co/600x400/1e1b4b/c4b5fd?text=Produk+5'; this.onerror=null;"></div>
+                        <div class="product-slide"><img src="product6.png" alt="Produk 6" class="rounded-xl shadow-2xl shadow-purple-900/50 w-full" onerror="this.src='https://placehold.co/600x400/1e1b4b/c4b5fd?text=Produk+6'; this.onerror=null;"></div>
+                </div>
+            </section>
+
+            <!-- ===== Testimoni Section (BARU) ===== -->
+            <!-- DIUBAH: py-20 lg:py-32 menjadi py-12 lg:py-20 -->
+            <section id="testimoni" class="py-12 lg:py-20 bg-gray-900/50 backdrop-blur-lg">
+                <div class="container mx-auto px-4">
+                    <div class="text-center mb-16 fade-in-up">
+                        <span class="text-indigo-400 font-semibold uppercase tracking-wider">Harapan</span>
+                        <h2 class="text-3xl md:text-4xl lg:text-5xl text-white font-bold mt-2">
+                            Apa Kata Tim Kami
+                        </h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Testimoni Card 1 -->
+                        <div class="bg-gray-800/60 border border-gray-700 p-8 rounded-2xl shadow-2xl shadow-black/30 transition-all duration-300 hover:border-purple-500 hover:scale-[1.03] hover:shadow-purple-500/20 fade-in-up">
+                            <div class="flex items-center mb-4">
+                                <!-- Ikon Bintang -->
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                            </div>
+                            <p class="text-gray-300 text-lg italic mb-6">"Kami berharap Brandora.id dapat terus menjadi ruang kolaborasi yang mulus, memudahkan setiap proses kerja, dan mendorong produktivitas tim kami untuk terus berkembang.</p>
+                            <div class="flex items-center">
+                                <img src="https://placehold.co/40x40/c4b5fd/1e1b4b?text=N" alt="Avatar" class="w-12 h-12 rounded-full mr-4">
+                                <div>
+                                    <p class="text-white font-semibold">Nizar Fathun Nazar</p>
+                                    <p class="text-gray-400 text-sm">Sistem Informasi, UNSIL</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimoni Card 2 -->
+                        <div class="bg-gray-800/60 border border-gray-700 p-8 rounded-2xl shadow-2xl shadow-black/30 transition-all duration-300 hover:border-purple-500 hover:scale-[1.03] hover:shadow-purple-500/20 fade-in-up" style="transition-delay: 150ms;">
+                            <div class="flex items-center mb-4">
+                                <!-- Ikon Bintang -->
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                                <!-- ... 4 bintang lagi ... -->
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                            </div>
+                            <p class="text-gray-300 text-lg italic mb-6">"Kami berharap fitur analitik Brandora.id terus berkembang sehingga kami dapat membuat keputusan berbasis data dengan lebih cepat, tepat, dan penuh percaya diri."</p>
+                            <div class="flex items-center">
+                                <img src="https://placehold.co/40x40/c4b5fd/1e1b4b?text=K" alt="Avatar" class="w-12 h-12 rounded-full mr-4">
+                                <div>
+                                    <p class="text-white font-semibold">Khairunisa Wahyu H</p>
+                                    <p class="text-gray-400 text-sm">Sistem Informasi, UNSIL</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimoni Card 3 -->
+                        <div class="bg-gray-800/60 border border-gray-700 p-8 rounded-2xl shadow-2xl shadow-black/30 transition-all duration-300 hover:border-purple-500 hover:scale-[1.03] hover:shadow-purple-500/20 fade-in-up" style="transition-delay: 300ms;">
+                            <div class="flex items-center mb-4">
+                                <!-- Ikon Bintang -->
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                                <!-- ... 4 bintang lagi ... -->
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.868 5.741h6.03a.95.95 0 01.558 1.705l-4.878 3.541 1.868 5.741a.95.95 0 01-1.451 1.054L10 16.03l-4.878 3.541a.95.95 0 01-1.451-1.054l1.868-5.741-4.878-3.541a.95.95 0 01.558-1.705h6.03l1.868-5.741z"></path></svg>
+                            </div>
+                            <p class="text-gray-300 text-lg italic mb-6">"Kami berharap layanan dukungan pelanggan Brandora.id dapat terus memberikan respons cepat dan bantuan yang maksimal, sehingga kolaborasi dan pekerjaan tim semakin lancar."</p>
+                            <div class="flex items-center">
+                                <img src="https://placehold.co/40x40/c4b5fd/1e1b4b?text=N" alt="Avatar" class="w-12 h-12 rounded-full mr-4">
+                                <div>
+                                    <p class="text-white font-semibold">Nana Andyana</p>
+                                    <p class="text-gray-400 text-sm">Sistem Informasi, UNSIL</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            
+
+        <!-- ===== Our Team Section (BARU) ===== -->
+        <!-- DIUBAH: py-20 lg:py-32 menjadi py-12 lg:py-20 -->
+            <section id="timkami" class="py-12 lg:py-20">
+                <div class="container mx-auto px-4">
+                    <div class="text-center mb-16 fade-in-up">
+                        <span class="text-indigo-400 font-semibold uppercase tracking-wider">Tim Kami</span>
+                        <h2 class="text-3xl md:text-4xl lg:text-5xl text-white font-bold mt-2">
+                            Perkenalkan Para Ahli di Balik Brandora.id
+                        </h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto"> <!-- DIUBAH: Kelas grid disesuaikan untuk 3 item & center -->
+                        <!-- Tim Card 1 -->
+                        <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-2xl shadow-2xl shadow-black/30 backdrop-blur-md transition-all duration-300 hover:border-purple-500 hover:scale-[1.03] hover:shadow-purple-500/20 fade-in-up text-center">
+                            <img src="nizar.jpeg" alt="Foto Tim 1" class="w-36 h-36 rounded-full mx-auto mb-6 border-4 border-gray-700 group-hover:border-purple-500 transition-colors" onerror="this.src='https://placehold.co/144x144/1e1b4b/c4b5fd?text=NFN'; this.onerror=null;">
+                            <h3 class="text-2xl text-white font-semibold mb-1">Nizar Fathun Nazar</h3>
+                            <p class="text-indigo-300 font-medium">Sistem Informasi</p>
+                        </div>
+
+                        <!-- Tim Card 2 -->
+                        <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-2xl shadow-2xl shadow-black/30 backdrop-blur-md transition-all duration-300 hover:border-purple-500 hover:scale-[1.03] hover:shadow-purple-500/20 fade-in-up text-center" style="transition-delay: 100ms;">
+                            <img src="khai.jpeg" alt="Foto Tim 2" class="w-36 h-36 rounded-full mx-auto mb-6 border-4 border-gray-700 group-hover:border-purple-500 transition-colors" onerror="this.src='https://placehold.co/144x144/1e1b4b/c4b5fd?text=KW'; this.onerror=null;">
+                            <h3 class="text-2xl text-white font-semibold mb-1">Khairunisa Wahyu</h3>
+                            <p class="text-indigo-300 font-medium">Sistem Informasi</p>
+                        </div>
+
+                        <!-- Tim Card 3 -->
+                        <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-2xl shadow-2xl shadow-black/30 backdrop-blur-md transition-all duration-300 hover:border-purple-500 hover:scale-[1.03] hover:shadow-purple-500/20 fade-in-up text-center" style="transition-delay: 200ms;">
+                            <img src="nana.jpeg" alt="Foto Tim 3" class="w-36 h-36 rounded-full mx-auto mb-6 border-4 border-gray-700 group-hover:border-purple-500 transition-colors" onerror="this.src='https://placehold.co/144x144/1e1b4b/c4b5fd?text=NA'; this.onerror=null;">
+                            <h3 class="text-2xl text-white font-semibold mb-1">Nana Andyana</h3>
+                            <p class="text-indigo-300 font-medium">Sistem Informasi</p>
+                        </div>
+                    </div>
+                </div>
+    </section>
+
+        </main>
+
+        <!-- ===== Footer ===== -->
+        <!-- DIUBAH: py-20 menjadi py-12 lg:py-20 -->
+        <footer id="kontak" class="py-12 lg:py-20 bg-gray-900/50 border-t border-gray-800 backdrop-blur-sm">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-12">
+                    <!-- Kolom 1: Logo & Copyright -->
+                    <div class="lg:col-span-2">
+                        <a href="#" class="flex items-center gap-3 mb-4">
+                            <img src="logo-brandora.png" alt="Logo Brandora.id" class="h-10 w-10 rounded-lg" onerror="this.src='https://placehold.co/40x40/6366F1/FFFFFF?text=B.id'; this.onerror=null;">
+                            <span class="text-white text-2xl font-bold tracking-tight">Brandora.id</span>
+                        </a>
+                        <p class="text-gray-400 max-w-xs mb-6">
+                            Memberdayakan tim untuk mencapai potensi penuh mereka.
+                        </p>
+                        <p class="text-gray-500 text-sm">
+                            © 2025 Brandora.id. Semua Hak Dilindungi.
+                        </p>
+                    </div>
+
+                    <!-- Kolom 2: Menu -->
+                    <div>
+                        <h4 class="text-white font-semibold text-lg mb-4">Menu</h4>
+                        <ul class="space-y-3">
+                            <li><a href="#produk" class="text-gray-400 hover:text-white transition-colors">Produk</a></li>
+                            <li><a href="#fitur" class="text-gray-400 hover:text-white transition-colors">Fitur</a></li>
+                            <li><a href="#testimoni" class="text-gray-400 hover:text-white transition-colors">Testimoni</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Kolom 3: Useful Links -->
+                    <div>
+                        <h4 class="text-white font-semibold text-lg mb-4">Useful Links</h4>
+                        <ul class="space-y-3">
+                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Pusat Bantuan</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Status Layanan</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Kebijakan Privasi</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Syarat & Ketentuan</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Kolom 4: Kontak -->
+                    <div>
+                        <h4 class="text-white font-semibold text-lg mb-4">Kontak Kami</h4>
+                        <ul class="space-y-3">
+                            <li><p class="text-gray-400">Tasikmalaya</p></li>
+                            <li><a href="mailto:halo@brandoraid" class="text-gray-400 hover:text-white transition-colors">brandoraid@gmail.com</a></li>
+                            <li><a href="tel:+62211234567" class="text-gray-400 hover:text-white transition-colors">+62 21 1234 567</a></li>
+                        </ul>
+                        <!-- Ikon Sosial Media -->
+                        <div class="flex gap-4 mt-6">
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.04c-5.5 0-10 4.49-10 10.02 0 5.52 4.5 10.02 10 10.02 5.5 0 10-4.5 10-10.02C22 6.53 17.5 2.04 12 2.04zM16.3 8.16h-1.8c-.8 0-1 .4-1 1v1.5h2.8l-.4 2.9h-2.3v7.1h-3v-7.1h-2.3V10.7h2.3V9.3c0-2.3 1.4-3.6 3.5-3.6h2.6v2.5z"></path></svg>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.46 6.13c-.8.35-1.65.59-2.55.69a4.56 4.56 0 001.96-2.46c-.9.53-1.89.92-2.95 1.13a4.5 4.5 0 00-7.66 4.1c-3.7-.19-6.99-1.96-9.19-4.66a4.49 4.49 0 001.39 6.01c-.74-.02-1.44-.23-2.05-.57v.06a4.5 4.5 0 003.61 4.41c-.75.2-1.54.23-2.32.09a4.5 4.5 0 004.2 3.13c-1.48 1.16-3.34 1.85-5.36 1.85-.35 0-.69-.02-1.03-.06a12.72 12.72 0 006.89 2.02c8.27 0 12.79-6.85 12.79-12.79 0-.19 0-.39-.01-.58a9.1 9.1 0 002.22-2.3z"></path></svg>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 18.5H5v-9h3v9zM6.5 8.1c-.9 0-1.6-.7-1.6-1.6s.7-1.6 1.6-1.6c.9 0 1.6.7 1.6 1.6s-.7 1.6-1.6 1.6zM19 18.5h-3v-4.4c0-1.1-.2-2.5-1.5-2.5-1.5 0-1.8.9-1.8 2.4v4.5h-3v-9h3V11c.4-.8 1.5-1.6 3.1-1.6 3.3 0 3.9 1.8 3.9 4.2v4.9z"></path></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+   <script>
+        // === Skrip untuk Menu Mobile ===
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let isMenuOpen = false;
+
+        menuBtn.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                mobileMenu.classList.remove('hidden');
+                menuBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>`;
+            } else {
+                mobileMenu.classList.add('hidden');
+                menuBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>`;
+            }
+        });
+
+        // Menutup menu saat link di-klik
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                isMenuOpen = false;
+                mobileMenu.classList.add('hidden');
+                menuBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>`;
+            });
+        });
+
+        // === Skrip untuk Animasi Fade-in-up saat Scroll ===
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                } else {
+                    entry.target.classList.remove('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Fallback gambar
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('img').forEach(function(img) {
+                img.addEventListener('error', function() {
+                    if (this.getAttribute('onerror')) return;
+                    const width = this.width || 100;
+                    const height = this.height || 100;
+                    const altText = this.alt || 'Gambar';
+                    this.src = `https://placehold.co/${width}x${height}/1e1b4b/c4b5fd?text=${encodeURIComponent(altText)}`;
+                });
+            });
+        });
+
+        // ==========================================
+        // 1. CONFIGURASI SUPABASE
+        // ==========================================
+        const supabaseUrl = 'https://klkikmsohdtyhqlahvwu.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtsa2lrbXNvaGR0eWhxbGFodnd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2NDQyNDQsImV4cCI6MjA3OTIyMDI0NH0.jnqaSZqbYIm6xjN_-NA_VvLa4lLo9TezKcQCNhcWf8k';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+
+        // ==========================================
+        // 2. LOGIKA SUBMIT FORM (HANYA ADA SATU BLOK KODE DI SINI)
+        // ==========================================
+        const form = document.getElementById('subscription-form');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+            
+            const emailInput = form.querySelector('input[type="email"]');
+            const messageInput = form.querySelector('textarea[name="feedback_message"]');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            
+            const email = emailInput.value;
+            const feedbackMessage = messageInput.value;
+
+            // Ubah tombol jadi Loading
+            const originalBtnText = submitBtn.innerText;
+            submitBtn.innerText = "Mengirim...";
+            submitBtn.disabled = true;
+
+            try {
+                // A. Simpan ke Supabase dulu
+                const { data, error } = await supabaseClient
+                    .from('subscriptions') 
+                    .insert([
+                        { email: email, feedback_message: feedbackMessage }
+                    ]);
+
+                if (error) throw error;
+
+                // B. Kirim Email via EmailJS
+                const emailParams = {
+                    user_email: email,         // Pastikan di Template EmailJS setting "To Email" isinya: {{user_email}}
+                    message: feedbackMessage,  
+                    reply_to: "halo@brandora.id"
+                };
+
+                // ⚠️ JANGAN LUPA ISI SERVICE ID & TEMPLATE ID DI BAWAH
+                await emailjs.send("service_iarpahq", "template_5jq102c", emailParams);
+
+                // C. Sukses
+                alert('Terima kasih! Anda telah berlangganan. Silakan cek email Anda.');
+                form.reset();
+
+            } catch (err) {
+                console.error('Error:', err);
+                alert('Terjadi kesalahan, silakan coba lagi.');
+            } finally {
+                // Kembalikan tombol
+                submitBtn.innerText = originalBtnText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
